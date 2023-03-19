@@ -7,6 +7,7 @@ from ui import UserInterface, ConsoleUI
 # BeautifulSoup4
 # requests
 
+
 class Application:
     def __init__(self, ui: UserInterface):
         self.__ui = ui

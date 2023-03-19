@@ -10,11 +10,13 @@ from ui import UserInterface, ConsoleUI
 
 class Application:
     def __init__(self, ui: UserInterface):
+        search_results_limit = 5
+
         self.__ui = ui
         self.__resources: List[BookResource] = [
-            ManyBooksResource(5),
-            FreeComputerBooksResource(5),
-            FreeEBooksResource(5)
+            ManyBooksResource(search_results_limit),
+            FreeComputerBooksResource(search_results_limit),
+            FreeEBooksResource(search_results_limit)
         ]
         self.strict_mode = False
 

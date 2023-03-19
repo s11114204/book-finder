@@ -11,7 +11,7 @@ from ui import UserInterface, ConsoleUI
 class Application:
     def __init__(self, ui: UserInterface):
         self.__ui = ui
-        self.__resources = [
+        self.__resources: List[BookResource] = [
             ManyBooksResource(5),
             FreeComputerBooksResource(5),
             FreeEBooksResource(5)
@@ -32,7 +32,7 @@ class Application:
 
         while True:
             book_name = self.__ui.ask_book_name()
-            search_results = self.search(book_name, self.strict_mode)
+            search_results = self.search(book_name)
 
             self.__ui.show_search_results(search_results)
 
@@ -49,7 +49,8 @@ class Application:
         results = []
 
         for resource in self.__resources:
-            results.extend(resource.search(book_name))
+            search_results = resource.search(book_name, self.strict_mode)
+            results.extend(search_results)
 
         return results
 

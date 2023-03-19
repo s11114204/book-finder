@@ -7,13 +7,6 @@ import requests
 from requests import Response
 
 
-def apply_strict_mode(func):
-    def wrapper(book_name: str, strict_mode: bool):
-        func(book_name, strict_mode)
-
-    return wrapper
-
-
 class BookSearchResult:
     def __init__(self, resource_name, url, name, description="", is_error_occurred=False):
         self.resource_name = resource_name
@@ -35,7 +28,7 @@ class BookResource:
         response = requests.get(search_url)
 
         if response.status_code != 200:
-            return [BookSearchResult(self._resource_name, search_url, book_name, "Status code is not 200", True)]
+            return [BookSearchResult(self._resource_name, search_url, book_name, "Status code is not 200", is_error_occurred=True)]
 
         return self._parse_search_response(response, strict_mode)
 

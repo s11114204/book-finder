@@ -15,7 +15,7 @@ class Application:
         self.__ui = ui
         self.__resources: List[BookResource] = [
             ManyBooksResource(search_results_limit),
-            FreeComputerBooksResource(search_results_limit),
+            # FreeComputerBooksResource(search_results_limit),
             FreeEBooksResource(search_results_limit)
         ]
         self.strict_mode = False

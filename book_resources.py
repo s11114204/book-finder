@@ -8,7 +8,7 @@ from requests import Response
 
 
 class BookSearchResult:
-    def __init__(self, resource_name, url, name, description="", is_error_occurred=False):
+    def __init__(self, resource_name, url, name="", description="", is_error_occurred=False):
         self.resource_name = resource_name
         self.url = url
         self.name = name
@@ -23,14 +23,18 @@ class BookResource:
         self.results_limit = results_limit
 
     def search(self, book_name: str, strict_mode: bool = False) -> List[BookSearchResult]:
-        search_url = self._get_search_url(book_name)
+        try:
+            search_url = self._get_search_url(book_name)
 
-        response = requests.get(search_url)
+            response = requests.get(search_url)
 
-        if response.status_code != 200:
-            return [BookSearchResult(self._resource_name, search_url, book_name, "Status code is not 200", is_error_occurred=True)]
+            if response.status_code != 200:
+                return [BookSearchResult(self._resource_name, search_url, description="Status code is not 200",
+                                         is_error_occurred=True)]
 
-        return self._parse_search_response(response, strict_mode)
+            return self._parse_search_response(response, strict_mode)
+        except Exception:
+            return [BookSearchResult(self._resource_name, self._resource_url, description='Unexpected exception was thrown', is_error_occurred=True)]
 
     def _get_search_url(self, book_name: str) -> str:
         raise NotImplementedError()
@@ -49,6 +53,9 @@ class ManyBooksResource(BookResource):
     def _parse_search_response(self, response: Response, strict_mode: bool) -> List[BookSearchResult]:
         html = BeautifulSoup(response.text, features="html.parser")
         results = []
+
+        if html.select_one('.view-empty') is not None:
+            return [BookSearchResult(self._resource_name, self._resource_url, description="no results", is_error_occurred=True )]
 
         for book_link in html.select('.book .content .field--name-field-cover a', limit=self.results_limit):
             book = BookSearchResult(
